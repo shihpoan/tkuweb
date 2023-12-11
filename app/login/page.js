@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { setCookie, getCookie } from "cookies-next";
 
 import Link from "next/link";
 
@@ -70,6 +71,8 @@ function TestHome() {
 
   const handleLoginSuccess = () => {
     // 登录成功后的操作...
+    setCookie("student_id", studentNumberValue, { maxAge: 60 * 60 * 2 });
+    setCookie("student_name", studentNameValue, { maxAge: 60 * 60 * 2 });
     // 创建一个 URL 对象
     // const parsedUrl = new URL(pathname);
 
@@ -79,7 +82,7 @@ function TestHome() {
     // console.log("pathname.query.redirect", redirectValue);
     console.log("pathname", pathname, redirect);
     // console.log("pathname.query.redirect", pathname.query.redirect);
-    const redirectUrl = redirect || "/";
+    const redirectUrl = redirect || "/riverGuides/overview";
     router.push(decodeURIComponent(redirectUrl));
   };
 

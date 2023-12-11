@@ -6,13 +6,16 @@ import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import Image from "next/image.js";
+import { getCookies } from "cookies-next";
 
 import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
-  executionResultsState,
-  picDescState,
-  studentInsightsState,
-} from "@/atoms/workspaceDataAtoms.js";
+  rrAutoCompleteTextFieldState,
+  participantsState,
+  discussionTopicAndContentState,
+} from "@/atoms/rrTempDatasAtoms.js";
+import { useNodeGetApi, useNodePostApi } from "@/hooks/useNodeApi.js";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -20,17 +23,39 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function page() {
   const router = useRouter();
-  //   const toast = useToast();
+  const cookies = getCookies();
 
   const [open, setOpen] = useState(false);
 
-  const executionResults = useRecoilValue(executionResultsState);
-  const picDesc = useRecoilValue(picDescState);
-  const studentInsights = useRecoilValue(studentInsightsState);
+  const autoCompleteTextField = useRecoilValue(rrAutoCompleteTextFieldState);
+  const participants = useRecoilValue(participantsState);
+  const discussionTopicAndContent = useRecoilValue(
+    discussionTopicAndContentState
+  );
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+  // 透過 建立新的 record
+  async function handlsSubmit() {
+    const _newDatas = {
+      student_id: cookies.student_id,
+      student_name: decodeURIComponent(cookies.student_name),
+      river_id: autoCompleteTextField[1],
+      class: autoCompleteTextField[2],
+      date: autoCompleteTextField[3],
+      host: autoCompleteTextField[4],
+      recorder: autoCompleteTextField[5],
+      participants: participants,
+      discussionTopicAndContent: discussionTopicAndContent,
+    };
+    try {
+      await useNodePostApi("/api/record/newRr", _newDatas);
+      setOpen(true);
+      setTimeout(() => {
+        router.push("/courseRecords/workspace");
+      }, [1500]);
+    } catch (err) {
+      console.log("err", err);
+    }
+  }
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -59,17 +84,20 @@ function page() {
       >
         <div
           id="student_identity"
-          className="flex flex-col border-b-[1px] border-primary_500 w-full h-max "
+          className="flex flex-col text-base border-b-[1px] border-primary_500 w-full h-max "
         >
           <div className="flex justify-between">
-            <p>10900207</p>
-            <p>施柏安</p>
-            <p>2023/11/23</p>
-          </div>
-          <div className="flex text-lg justify-between">
-            <p>陳ＯＯ教官</p>
-            <p>經濟一Ａ</p>
-            <p>地點：庄子后溪</p>
+            <div className="flex flex-col">
+              <p>學號：10900207</p>
+              <p>姓名：施柏安</p>
+              <p>系班級：{autoCompleteTextField[2]}</p>
+              <p>日期：{autoCompleteTextField[3]}</p>
+            </div>
+            <div className="flex flex-col">
+              <p>主持人：{autoCompleteTextField[4]}</p>
+              <p>紀錄：{autoCompleteTextField[5]}</p>
+              <p>地點：{autoCompleteTextField[1]}</p>
+            </div>
           </div>
         </div>
         <div
@@ -77,42 +105,17 @@ function page() {
           className="flex flex-col w-full h-max mt-4 gap-4"
         >
           <div id="resultDesc1" className="flex flex-col w-full h-max gap-2">
-            <p className="text-black font-bold">執行成果重點說明</p>
-            <p className="flex flex-wrap text-gray-600 text-base h-max">
-              {executionResults
-                ? executionResults
-                : "貫穿這兩個里的重要溪流，其沿線還有已廢棄的雙峻頭南一圳、早期軍方設施，同時因為廢棄使用，使得生態相當豐富。"}
+            <p className="text-black font-bold">參與人員</p>
+            <p className="flex flex-wrap max-w-full h-max text-gray-600 text-base overflow-hidden">
+              {participants ? participants : "participants participants"}
             </p>
-          </div>
-          <div id="resultDesc2" className="flex flex-col w-full h-max gap-2">
-            <p className="text-black font-bold">上傳照片</p>
-            <div className="flex flex-wrap max-w-full gap-2">
-              {[1, 2, 3, 4, 5].map((i, idx) => (
-                <Image
-                  key={idx}
-                  alt="pic"
-                  src={"/images/test.png"}
-                  width={400}
-                  height={300}
-                  className="w-[80px] h-[60px]"
-                />
-              ))}
-            </div>
           </div>
           <div id="resultDesc3" className="flex flex-col w-full h-max gap-2">
-            <p className="text-black font-bold">成果照片相關說明</p>
+            <p className="text-black font-bold">討論主題與內容</p>
             <p className="flex flex-wrap text-gray-600 text-base h-max">
-              {picDesc
-                ? picDesc
-                : "這組照片捕捉了穿越兩個村落重要溪流旁的景象，其中包括已廢棄的雙峻頭南一圳，這是一處曾經滋養土地的古老水利設施。照片中還展示了早期的軍事設施遺址，它們的廢棄不僅訴說著過往的故事，也為當地生態提供了一片豐饒的庇護所。"}
-            </p>
-          </div>
-          <div id="resultDesc4" className="flex flex-col w-full h-max gap-2">
-            <p className="text-black font-bold">學生心得</p>
-            <p className="flex flex-wrap text-gray-600 text-base h-max">
-              {studentInsights
-                ? studentInsights
-                : "古水渠旁，遺跡與豐富生態共生，歷史與自然交織。"}
+              {discussionTopicAndContent
+                ? discussionTopicAndContent
+                : "discussionTopicAndContent discussionTopicAndContent"}
             </p>
           </div>
         </div>
@@ -132,7 +135,7 @@ function page() {
         <button
           className="flex w-[8rem] h-[2rem] rounded border-[1px] bg-white border-gray-500 text-lg text-primary_500 justify-center items-center"
           onClick={() => {
-            handleClick();
+            handlsSubmit();
           }}
         >
           確認提交
