@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const nodeServerPath = "http://localhost:8000";
+const nodeServerPath = "https://tku.node.zhshihpoan.com";
 
 // apis
 async function useNodeGetApi(apiPath, apiObj) {
