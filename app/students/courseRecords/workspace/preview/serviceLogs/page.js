@@ -96,8 +96,8 @@ function page() {
           <div className="flex justify-between">
             <div className="flex flex-col">
               <p>課程名稱：{autoCompleteTextField[0]}</p>
-              <p>學號：10900207</p>
-              <p>姓名：施柏安</p>
+              <p>學號：{cookies.student_id}</p>
+              <p>姓名：{cookies.student_name}</p>
               <p>日期：{autoCompleteTextField[3]}</p>
               <p>服務機構：{autoCompleteTextField[6]}</p>
             </div>
