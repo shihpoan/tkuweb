@@ -49,7 +49,7 @@ function page() {
       text: "課程滿意度調查",
       code: "lol",
       url: "",
-      tier: ["leader"],
+      tier: ["members", "leader"],
       isShown: true,
     },
     {
@@ -57,7 +57,7 @@ function page() {
       text: "系統滿意度調查",
       code: "pop",
       url: "",
-      tier: ["leader"],
+      tier: ["members", "leader"],
       isShown: true,
     },
   ]);
