@@ -89,10 +89,13 @@ function page() {
     });
 
     try {
-      const response = await fetch("http://localhost:8000/upload-multiple", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://tku.node.zhshihpoan.com/upload-multiple",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
