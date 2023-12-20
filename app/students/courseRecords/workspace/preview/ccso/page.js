@@ -131,9 +131,9 @@ function page() {
       images.files.forEach((image) => _newDatas.picsUrl.push(image.path));
       await useNodePostApi("/api/record/newCcso", _newDatas);
       setOpen(true);
-      // setTimeout(() => {
-      //   router.push("/courseRecords/workspace");
-      // }, [1500]);
+      setTimeout(() => {
+        router.push("/students/courseRecords/workspace");
+      }, [1500]);
     } catch (err) {
       console.log("err", err);
     }
