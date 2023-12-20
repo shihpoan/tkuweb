@@ -15,7 +15,6 @@ import Autocomplete from "@mui/joy/Autocomplete";
 
 import { useNodePostApi } from "@/hooks/useNodeApi.js";
 
-import CheckCircleOutlined from "@mui/icons-material/CheckCircleOutlined";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 
 function Login() {
