@@ -15,6 +15,9 @@ import Autocomplete from "@mui/joy/Autocomplete";
 
 import { useNodePostApi } from "@/hooks/useNodeApi.js";
 
+import CheckCircleOutlined from "@mui/icons-material/CheckCircleOutlined";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+
 function Login() {
   const router = useRouter();
   const pathname = usePathname();
@@ -31,8 +34,10 @@ function Login() {
 
   const [isErrorLogin, setIsErrorLogin] = useState(false);
 
+  const [isShowhPassword, setIsShownPassword] = useState(false);
+
   useEffect(() => {
-    console.log("students layout cookies", cookies);
+    // console.log("students layout cookies", cookies);
 
     const _accessToken = cookies.acc_tku;
     if (_accessToken) {
@@ -233,8 +238,22 @@ function Login() {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>姓名</FormLabel>
+          <FormLabel>密碼</FormLabel>
           <Input
+            endDecorator={
+              !isShowhPassword ? (
+                <EyeSlashIcon
+                  className="w-5 h-5"
+                  onClick={() => setIsShownPassword(true)}
+                />
+              ) : (
+                <EyeIcon
+                  className="w-5 h-5"
+                  onClick={() => setIsShownPassword(false)}
+                />
+              )
+            }
+            type={!isShowhPassword ? "password" : "text"}
             placeholder="請輸入你的姓名"
             onChange={(e) => handleStudentNameChange(e)}
           />
