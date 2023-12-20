@@ -89,7 +89,7 @@ function page() {
           <div className="flex justify-between">
             <div className="flex flex-col">
               <p>學號：{cookies.student_id}</p>
-              <p>姓名：{cookies.student_name}</p>
+              <p>姓名：{decodeURI(cookies.student_name)}</p>
               <p>系班級：{autoCompleteTextField[2]}</p>
               <p>日期：{autoCompleteTextField[3]}</p>
             </div>
