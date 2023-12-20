@@ -24,14 +24,14 @@ export default function LoginPage() {
         >
           學生登入
         </button>
-        <button
+        {/* <button
           className="w-[10rem] h-[3rem] border-[2px] border-white text-lg text-white bg-primary_500 hover:bg-primary_200 font-bold py-2 px-4 rounded"
           onClick={() => {
             router.push("/home");
           }}
         >
           教師登入
-        </button>
+        </button> */}
       </div>
       <div className="absolute bottom-4 text-sm">V1.0.0</div>
     </>
