@@ -253,7 +253,7 @@ function Login() {
               )
             }
             type={!isShowhPassword ? "password" : "text"}
-            placeholder="請輸入你的姓名"
+            placeholder="請輸入你的密碼"
             onChange={(e) => handleStudentNameChange(e)}
           />
         </FormControl>
