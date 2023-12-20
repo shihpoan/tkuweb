@@ -89,6 +89,22 @@ function Login() {
       label: "經濟1B",
       id: "class_0001",
     },
+    {
+      label: "經濟4B",
+      id: "class_0002",
+    },
+    {
+      label: "電機4",
+      id: "class_0003",
+    },
+    {
+      label: "經濟1C",
+      id: "class_0004",
+    },
+    {
+      label: "經濟2C",
+      id: "class_0005",
+    },
   ];
 
   // 原手刻功能，使用 Mui 原件取代
