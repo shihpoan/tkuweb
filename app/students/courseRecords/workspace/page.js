@@ -66,17 +66,17 @@ function page() {
   const [isSlExistedState, setIsSlExistedState] = useState(true);
   const [isRrExistedState, setIsRrExistedState] = useState(true);
 
-  useEffect(() => {
-    const _datas = [...btnStyledAndDataArr];
+  // useEffect(() => {
+  //   const _datas = [...btnStyledAndDataArr];
 
-    if (_datas.length) {
-      const dataTierFilter = _datas.filter((data) =>
-        data.tier.find((i) => i == _student_tier)
-      );
-      console.log("dataTierFilter", dataTierFilter);
-      setBtnStyledAndDataArr([...dataTierFilter]);
-    }
-  }, []);
+  //   if (_datas.length) {
+  //     const dataTierFilter = _datas.filter((data) =>
+  //       data.tier.find((i) => i == _student_tier)
+  //     );
+  //     console.log("dataTierFilter", dataTierFilter);
+  //     setBtnStyledAndDataArr([...dataTierFilter]);
+  //   }
+  // }, []);
 
   useEffect(() => {
     async function findDbData(route) {
@@ -140,7 +140,13 @@ function page() {
       }
     });
     console.log("_btnStyledAndDataArr", _btnStyledAndDataArr);
-    setBtnStyledAndDataArr([..._btnStyledAndDataArr]);
+    if (_btnStyledAndDataArr.length) {
+      const dataTierFilter = _btnStyledAndDataArr.filter((data) =>
+        data.tier.find((i) => i == _student_tier)
+      );
+      console.log("dataTierFilter", dataTierFilter);
+      setBtnStyledAndDataArr([...dataTierFilter]);
+    }
   }, [
     isCslrExistedState,
     isSlExistedState,
