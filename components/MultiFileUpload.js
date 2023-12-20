@@ -35,7 +35,15 @@ const MultiFileUpload = () => {
     }
   }, [selectedFiles]);
   const handleFileChange = (event) => {
-    setSelectedFiles([...event.target.files]);
+    let files = [...event.target.files];
+    let slicedFiles;
+
+    if (files.length > 5) {
+      slicedFiles = files.slice(0, 5);
+      setSelectedFiles([...slicedFiles]);
+    } else {
+      setSelectedFiles([...files]);
+    }
   };
 
   const resizeFile = (file) =>
@@ -79,10 +87,13 @@ const MultiFileUpload = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:8000/upload-multiple", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://tku.node.zhshihpoan.com/upload-multiple",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
