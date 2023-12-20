@@ -3,7 +3,7 @@ import { atom } from "recoil";
 // 0名稱、1地點、2系班級、3日期、4主持人、5紀錄
 export const rrAutoCompleteTextFieldState = atom({
   key: "rrAutoCompleteTextFieldState",
-  default: ["", "", "", "", "", ""],
+  default: ["河川生態保育課程", "", "", "", "", ""],
 });
 
 // 參與人員

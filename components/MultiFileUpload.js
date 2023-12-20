@@ -1,12 +1,39 @@
 // components/MultiFileUpload.js
 "use client";
 // client/components/MultiFileUpload.js
-import React, { useState, useE } from "react";
+import React, { useState, useEffect } from "react";
 import Resizer from "react-image-file-resizer";
 
-const MultiFileUpload = () => {
-  const [selectedFiles, setSelectedFiles] = useState([]);
+import { useRecoilState } from "recoil";
+import {
+  selectedImageState,
+  selectedFileState,
+} from "@/atoms/selectedImageAtom.js";
 
+const MultiFileUpload = () => {
+  const [selectedFiles, setSelectedFiles] = useRecoilState(selectedFileState);
+  const [selectedImage, setSelectedImages] = useRecoilState(selectedImageState);
+
+  useEffect(() => {
+    console.log("selectedFiles", selectedFiles);
+    const newImages = [];
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          newImages.push(e.target.result);
+          if (newImages.length === selectedFiles.length) {
+            setSelectedImages(newImages);
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }
+    }
+  }, [selectedFiles]);
   const handleFileChange = (event) => {
     setSelectedFiles([...event.target.files]);
   };
@@ -28,7 +55,7 @@ const MultiFileUpload = () => {
           800, // 可以调整为适合的尺寸
           600, // 可以调整为适合的尺寸
           outputFormat,
-          75, // 质量
+          50, // 质量
           0, // 旋转
           (uri) => {
             resolve(uri);
@@ -72,20 +99,35 @@ const MultiFileUpload = () => {
   };
 
   return (
-    <label className="flex text-sm justify-between items-center">
-      <input
-        type="file"
-        multiple
-        onChange={handleFileChange}
-        className="block file:w-[30%] file:h-max file:bg-white file:border-[1px] file:border-gray-700 file:rounded file:text-gray-400 file:p-2"
-      />
-      <button
-        onClick={handleUpload}
-        className="block w-[30%] h-max bg-white border-[1px] border-gray-700 rounded text-gray-400 p-2"
-      >
-        上傳
-      </button>
-    </label>
+    <div className="flex flex-col text-sm">
+      <label>
+        <div className="flex justify-between items-center">
+          <input
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="block file:w-[30%] file:h-max file:bg-white file:border-[1px] file:border-gray-700 file:rounded file:text-gray-400 file:p-2"
+          />
+
+          {/* <button
+            onClick={handleUpload}
+            className="block w-[30%] h-max bg-white border-[1px] border-gray-700 rounded text-gray-400 p-2"
+          >
+            上傳
+          </button> */}
+        </div>
+      </label>
+      <div className="flex flex-wrap">
+        {selectedImage.map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`Preview ${index}`}
+            style={{ maxWidth: "95px", margin: "5px" }}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 

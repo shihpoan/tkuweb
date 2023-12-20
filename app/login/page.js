@@ -1,101 +1,156 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { setCookie, getCookie } from "cookies-next";
+import { setCookie, getCookies, deleteCookie } from "cookies-next";
+import { useRecoilState } from "recoil";
+import { isAccessTokenValid } from "@/atoms/accessTokenAtom.js";
 
 import Link from "next/link";
 
-function TestHome() {
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import FormHelperText from "@mui/joy/FormHelperText";
+import Input from "@mui/joy/Input";
+import Autocomplete from "@mui/joy/Autocomplete";
+
+import { useNodePostApi } from "@/hooks/useNodeApi.js";
+
+function Login() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  const cookies = getCookies();
 
-  const [studentNumberFocus, setStudentNumberFocus] = useState(false);
+  const [isAccessTokenValidState, setIsAccessTokenValidState] =
+    useRecoilState(isAccessTokenValid);
+
   const [studentNumberValue, setStudentNumberValue] = useState("");
-  const [studentNameFocus, setStudentNameFocus] = useState(false);
   const [studentNameValue, setStudentNameValue] = useState("");
-  const [studentClassFocus, setStudentClassFocus] = useState(false);
   const [studentClassValue, setStudentClassValue] = useState("");
-  const studentNumberInputRef = useRef(null);
-  const studentNameInputRef = useRef(null);
-  const studentClassSelectRef = useRef(null);
+
+  const [isErrorLogin, setIsErrorLogin] = useState(false);
 
   useEffect(() => {
-    if (studentNumberFocus) {
-      studentNumberInputRef.current.focus();
-    }
-  }, [studentNumberFocus]);
+    console.log("students layout cookies", cookies);
 
-  useEffect(() => {
-    if (studentNameFocus) {
-      studentNameInputRef.current.focus();
+    const _accessToken = cookies.acc_tku;
+    if (_accessToken) {
+      const redirectUrl = redirect || "students/riverGuides/overview";
+      router.push(decodeURIComponent(redirectUrl));
     }
-  }, [studentNameFocus]);
+  }, [cookies]);
 
-  const handleStudentNumberFocus = () => {
-    setStudentNumberFocus(true);
-  };
-  const handleStudentNumberBlur = () => {
-    if (studentNumberFocus && !studentNumberInputRef.current.value) {
-      setStudentNumberFocus(false);
-    }
-  };
   const handleStudentNumberChange = (e) => {
     setStudentNumberValue(e.target.value);
-  };
-
-  const handleStudentNameFocus = () => {
-    setStudentNameFocus(true);
-  };
-  const handleStudentNameBlur = () => {
-    if (studentNameFocus && !studentNameInputRef.current.value) {
-      setStudentNameFocus(false);
-    }
   };
   const handleStudentNameChange = (e) => {
     setStudentNameValue(e.target.value);
   };
-
-  const handleStudentClassFocus = () => {
-    setStudentClassFocus(true);
-  };
-  const handleStudentClassBlur = () => {
-    if (studentClassFocus && !studentClassSelectRef.current.value) {
-      setStudentClassFocus(false);
-    }
-  };
   const handleStudentClassChange = (e) => {
     setStudentClassValue(e.target.value);
   };
-
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
     // 登录成功后的操作...
-    setCookie("student_id", studentNumberValue, { maxAge: 60 * 60 * 2 });
-    setCookie("student_name", studentNameValue, { maxAge: 60 * 60 * 2 });
-    // 创建一个 URL 对象
-    // const parsedUrl = new URL(pathname);
 
-    // // 使用 URLSearchParams 获取查询参数
-    // const redirectValue = parsedUrl.searchParams.get("redirect");
-
-    // console.log("pathname.query.redirect", redirectValue);
-    console.log("pathname", pathname, redirect);
-    // console.log("pathname.query.redirect", pathname.query.redirect);
-    const redirectUrl = redirect || "/riverGuides/overview";
-    router.push(decodeURIComponent(redirectUrl));
+    try {
+      const userDbDatas = await useNodePostApi("/auth/signin", {
+        account: studentNumberValue,
+        password: studentNameValue,
+      });
+      const userDatas = userDbDatas.data.data;
+      const acc = userDatas.acc;
+      const student_id = userDatas.user.account;
+      const student_name = userDatas.user.name;
+      const student_class = userDatas.user.class;
+      const student_tier = userDatas.user.tier;
+      // console.log("loginPage userData", userDatas);
+      setCookie("acc_tku", acc, { maxAge: 60 * 60 * 2 });
+      setCookie("student_id", student_id, { maxAge: 60 * 60 * 2 });
+      setCookie("student_name", student_name, { maxAge: 60 * 60 * 2 });
+      setCookie("student_class", student_class, { maxAge: 60 * 60 * 2 });
+      setCookie("student_tier", student_tier, { maxAge: 60 * 60 * 2 });
+      // console.log("pathname", pathname, redirect);
+      // console.log("pathname.query.redirect", pathname.query.redirect);
+      const redirectUrl = redirect || "students/riverGuides/overview";
+      router.push(decodeURIComponent(redirectUrl));
+    } catch (err) {
+      setIsErrorLogin(true);
+      console.log("err", err);
+    }
   };
+
+  const classes = [
+    {
+      label: "經濟1B",
+      id: "class_0001",
+    },
+  ];
+
+  // 原手刻功能，使用 Mui 原件取代
+  // const [studentNumberFocus, setStudentNumberFocus] = useState(false);
+  // const [studentNameFocus, setStudentNameFocus] = useState(false);
+  // const [studentClassFocus, setStudentClassFocus] = useState(false);
+  // const studentNumberInputRef = useRef(null);
+  // const studentNameInputRef = useRef(null);
+  // const studentClassSelectRef = useRef(null);
+  // useEffect(() => {
+  //   if (studentNumberFocus) {
+  //     studentNumberInputRef.current.focus();
+  //   }
+  // }, [studentNumberFocus]);
+
+  // useEffect(() => {
+  //   if (studentNameFocus) {
+  //     studentNameInputRef.current.focus();
+  //   }
+  // }, [studentNameFocus]);
+  // const handleStudentNameFocus = () => {
+  //   setStudentNameFocus(true);
+  // };
+  // const handleStudentNameBlur = () => {
+  //   if (studentNameFocus && !studentNameInputRef.current.value) {
+  //     setStudentNameFocus(false);
+  //   }
+  // };
+
+  // const handleStudentClassFocus = () => {
+  //   setStudentClassFocus(true);
+  // };
+  // const handleStudentClassBlur = () => {
+  //   if (studentClassFocus && !studentClassSelectRef.current.value) {
+  //     setStudentClassFocus(false);
+  //   }
+  // };
+
+  // const handleStudentNumberFocus = () => {
+  //   setStudentNumberFocus(true);
+  // };
+  // const handleStudentNumberBlur = () => {
+  //   if (studentNumberFocus && !studentNumberInputRef.current.value) {
+  //     setStudentNumberFocus(false);
+  //   }
+  // };
 
   return (
     <>
       <div id="title" className="flex flex-col justify-center items-center">
         <h1 className="text-[2rem] font-bold">河川生態保育學習</h1>
       </div>
+
       <div
         id="btnArea"
-        className="flex flex-col w-[20rem] h-[25rem] text-gray-500 bg-white mt-[2rem] rounded px-4 py-20 gap-4"
+        className="relative flex flex-col w-[20rem] h-[25rem] text-gray-500 bg-white mt-[2rem] rounded px-4 py-20 gap-4"
       >
-        <div className={`relative mb-4 ${studentNumberFocus ? "focus" : ""}`}>
+        <div
+          className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 text-red-500 ${
+            isErrorLogin ? "flex" : "hidden"
+          }`}
+        >
+          登入錯誤
+        </div>
+
+        {/* <div className={`relative mb-4 ${studentNumberFocus ? "focus" : ""}`}>
           <input
             type="text"
             placeholder={studentNumberFocus ? "請輸入你的學號" : " "}
@@ -169,7 +224,29 @@ function TestHome() {
           >
             班級
           </label>
-        </div>
+        </div> */}
+        <FormControl>
+          <FormLabel>學號</FormLabel>
+          <Input
+            placeholder="請輸入你的學號"
+            onChange={(e) => handleStudentNumberChange(e)}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>姓名</FormLabel>
+          <Input
+            placeholder="請輸入你的姓名"
+            onChange={(e) => handleStudentNameChange(e)}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>班級</FormLabel>
+          <Autocomplete
+            placeholder="請輸入你的班級"
+            options={classes}
+            onChange={(e) => handleStudentClassChange(e)}
+          />
+        </FormControl>
       </div>
       <button
         className="w-[10rem] h-[3rem] border-[2px] border-white text-lg text-white bg-primary_500 hover:bg-primary_200 font-bold py-2 px-4 rounded mt-[4rem]"
@@ -184,4 +261,4 @@ function TestHome() {
   );
 }
 
-export default TestHome;
+export default Login;

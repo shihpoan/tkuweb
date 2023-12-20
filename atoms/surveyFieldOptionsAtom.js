@@ -6,7 +6,7 @@ export const baseOptionsValueArrState = atom({
   default: {
     0: ["河川生態保育課程"],
     1: ["庄子后溪"],
-    2: ["經濟一A", "水環水資一", "統計一C"],
+    2: ["經濟一B"],
   },
 });
 

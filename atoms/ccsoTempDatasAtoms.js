@@ -3,7 +3,7 @@ import { atom } from "recoil";
 // 0名稱、1地點、2系班級、3日期、4教官
 export const autoCompleteTextFieldState = atom({
   key: "autoCompleteTextFieldState",
-  default: ["", "", "", "", ""],
+  default: ["河川生態保育課程", "", "", "", ""],
 });
 
 export const executionResultsState = atom({

@@ -3,7 +3,7 @@ import { atom } from "recoil";
 // 0名稱、1地點、2系班級、3日期、4時數、5服務人數、6服務機構
 export const slAutoCompleteTextFieldState = atom({
   key: "slAutoCompleteTextFieldState",
-  default: ["", "", "", "", "", "", ""],
+  default: ["河川生態保育課程", "", "", "", "", "", ""],
 });
 
 // 数据呈现方式

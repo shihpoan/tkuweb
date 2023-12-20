@@ -3,7 +3,7 @@ import { atom } from "recoil";
 // 0名稱、1地點、2系班級、3日期、4主持人、5紀錄
 export const cslrAutoCompleteTextFieldState = atom({
   key: "cslrAutoCompleteTextFieldState",
-  default: ["", "", "", "", "", ""],
+  default: ["河川生態保育課程", "", "", "", "", ""],
 });
 
 // 在本次社區服務中，你印象最深刻的畫面是什麼？為什麼？
