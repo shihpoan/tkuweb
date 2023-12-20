@@ -161,7 +161,9 @@ function page() {
             button.isShown ? button.color : "bg-primary_200"
           } rounded p-2`}
           onClick={() => {
-            button.isShown && button.url ? router.push(`${button.url}`) : null;
+            button.isShown && button.url
+              ? router.push(`${button.url}`)
+              : alert("尚未開放");
           }}
         >
           {button.text}
