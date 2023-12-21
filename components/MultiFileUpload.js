@@ -88,8 +88,8 @@ const MultiFileUpload = () => {
 
     try {
       const response = await fetch(
-        // "https://tku.node.zhshihpoan.com/upload-multiple",
-        "http://localhost:8000/upload-multiple",
+        "https://tku.node.zhshihpoan.com/upload-multiple",
+        // "http://localhost:8000/upload-multiple",
         {
           method: "POST",
           body: formData,
