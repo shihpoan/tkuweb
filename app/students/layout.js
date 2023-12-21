@@ -9,7 +9,7 @@ export default function studentLayout({ children }) {
   const cookies = getCookies();
 
   useEffect(() => {
-    console.log("students layout cookies", cookies);
+    // console.log("students layout cookies", cookies);
     const _accessToken = cookies.acc_tku;
     if (!_accessToken) {
       router.push("/login");

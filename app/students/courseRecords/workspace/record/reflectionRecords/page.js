@@ -57,7 +57,7 @@ function page() {
 
   return (
     <>
-      <div className="flex flex-col flex-grow w-full h-screen text-xl justify-start items-center px-8 pt-4 gap-2">
+      <div className="flex flex-col flex-grow w-full h-screen text-xl justify-start items-center px-8 gap-2">
         <div
           id="contents"
           className="flex flex-wrap w-full justify-start gap-1"

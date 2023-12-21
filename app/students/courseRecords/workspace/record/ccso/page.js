@@ -71,7 +71,7 @@ function page() {
     <>
       <div
         id="contents"
-        className="flex flex-col flex-grow w-full h-max text-xl justify-start items-center px-8 pt-4 gap-2"
+        className="flex flex-col flex-grow w-full h-max text-xl justify-start items-center px-8 gap-2"
       >
         <div
           id="contents"

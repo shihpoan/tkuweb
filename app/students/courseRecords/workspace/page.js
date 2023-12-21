@@ -48,7 +48,7 @@ function page() {
       color: "bg-primary_500",
       text: "課程滿意度調查",
       code: "lol",
-      url: "",
+      url: "/students/feedbackForms/courseFeedback?title=課程滿意度調查",
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -56,7 +56,7 @@ function page() {
       color: "bg-primary_500",
       text: "系統滿意度調查",
       code: "pop",
-      url: "",
+      url: "/students/feedbackForms/systemFeedback?title=系統滿意度調查",
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -144,7 +144,7 @@ function page() {
       const dataTierFilter = _btnStyledAndDataArr.filter((data) =>
         data.tier.find((i) => i == _student_tier)
       );
-      console.log("dataTierFilter", dataTierFilter);
+      // console.log("dataTierFilter", dataTierFilter);
       setBtnStyledAndDataArr([...dataTierFilter]);
     }
   }, [
