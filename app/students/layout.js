@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation.js";
 
 import { getCookies, deleteCookie } from "cookies-next";
+import { HomeIcon } from "@heroicons/react/24/solid";
 
 export default function studentLayout({ children }) {
   const router = useRouter();
@@ -20,7 +21,15 @@ export default function studentLayout({ children }) {
       id="container"
       className="relative flex flex-col w-screen lg:w-[390px] h-screen lg:h-[844px] bg-white justify-center items-center overflow-auto"
     >
-      <div className="absolute top-0 right-0 flex w-[100%] h-[3rem] bg-primary_500 justify-end items-center p-2 z-10">
+      <div className="absolute top-0 right-0 flex w-[100%] h-[3rem] bg-primary_500 justify-between items-center p-2 z-10">
+        <button
+          className="flex w-[3rem] h-[2rem] bg-primary_500 border-[1px] border-primary_200 rounded justify-center items-center"
+          onClick={() => {
+            router.push("/students/riverGuides/overview");
+          }}
+        >
+          <HomeIcon className="w-4 h-4" />
+        </button>
         <button
           className="w-[3rem] h-[2rem] bg-primary_500 border-[1px] border-primary_200 rounded"
           onClick={() => {

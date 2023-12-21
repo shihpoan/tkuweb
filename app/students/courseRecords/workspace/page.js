@@ -47,7 +47,7 @@ function page() {
     {
       color: "bg-primary_500",
       text: "課程滿意度調查",
-      code: "lol",
+      code: "course",
       url: "/students/feedbackForms/courseFeedback?title=課程滿意度調查",
       tier: ["members", "leader"],
       isShown: true,
@@ -55,7 +55,7 @@ function page() {
     {
       color: "bg-primary_500",
       text: "系統滿意度調查",
-      code: "pop",
+      code: "system",
       url: "/students/feedbackForms/systemFeedback?title=系統滿意度調查",
       tier: ["members", "leader"],
       isShown: true,
@@ -65,6 +65,10 @@ function page() {
   const [isCslrExistedState, setIsCslrExistedState] = useState(true);
   const [isSlExistedState, setIsSlExistedState] = useState(true);
   const [isRrExistedState, setIsRrExistedState] = useState(true);
+  const [isCourseFeedbacksExistedState, setIsCourseFeedbacksExistedState] =
+    useState(true);
+  const [isSystemFeedbacksExistedState, setIsSystemFeedbacksExistedState] =
+    useState(true);
 
   // useEffect(() => {
   //   const _datas = [...btnStyledAndDataArr];
@@ -79,16 +83,16 @@ function page() {
   // }, []);
 
   useEffect(() => {
-    async function findDbData(route) {
-      const dbDatas = await useNodePostApi(`/api/record/find${route}`);
+    async function findDbData(route1, route2) {
+      const dbDatas = await useNodePostApi(`/api/${route1}/find${route2}`);
 
       const data = dbDatas.data.data;
-      // console.log("ccsoDatas", ccsos);
+      console.log("data", data);
 
       const indexOfData = data.findIndex((i) => i.student_id == _student_id);
-      // console.log("indexOfCcso", indexOfCcso);
+      console.log("indexOfData", indexOfData);
       if (indexOfData + 1 > 0) {
-        switch (route) {
+        switch (route2) {
           case "Cslr":
             setIsCslrExistedState(false);
             break;
@@ -101,14 +105,22 @@ function page() {
           case "Ccso":
             setIsCcsoExistedState(false);
             break;
+          case "CourseFeedbacks":
+            setIsCourseFeedbacksExistedState(false);
+            break;
+          case "SystemFeedbacks":
+            setIsSystemFeedbacksExistedState(false);
+            break;
         }
       }
     }
     const asyncFunctions = [
-      findDbData("Cslr"),
-      findDbData("Sl"),
-      findDbData("Rr"),
-      findDbData("Ccso"),
+      findDbData("record", "Cslr"),
+      findDbData("record", "Sl"),
+      findDbData("record", "Rr"),
+      findDbData("record", "Ccso"),
+      findDbData("courseFeedback", "CourseFeedbacks"),
+      findDbData("systemFeedback", "SystemFeedbacks"),
     ];
 
     Promise.all(asyncFunctions)
@@ -135,6 +147,12 @@ function page() {
         case "ccso":
           btn.isShown = isCcsoExistedState;
           break;
+        case "course":
+          btn.isShown = isCourseFeedbacksExistedState;
+          break;
+        case "system":
+          btn.isShown = isSystemFeedbacksExistedState;
+          break;
         default:
           console.log("數字不在1到3之間");
       }
@@ -152,6 +170,8 @@ function page() {
     isSlExistedState,
     isRrExistedState,
     isCcsoExistedState,
+    isCourseFeedbacksExistedState,
+    isSystemFeedbacksExistedState,
   ]);
 
   return (
@@ -167,9 +187,7 @@ function page() {
             button.isShown ? button.color : "bg-primary_200"
           } rounded p-2`}
           onClick={() => {
-            button.isShown && button.url
-              ? router.push(`${button.url}`)
-              : alert("尚未開放");
+            button.isShown ? router.push(`${button.url}`) : alert("已填寫完成");
           }}
         >
           {button.text}
