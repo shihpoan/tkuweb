@@ -7,12 +7,14 @@ import { useRecoilState } from "recoil";
 import { nowSelectedCourseState } from "@/atoms/nowCourseAtom.js";
 import { setCookie } from "cookies-next";
 
-import { useNodePostApi } from "@/hooks/useNodeApi.js";
+import { useNodePostApi, useNodePostImageApi } from "@/hooks/useNodeApi.js";
 
 export default function Page() {
   const router = useRouter();
 
   const [riverList, setRiverList] = useState([]);
+  const [riverIdArr, setRiverIdArr] = useState([]);
+  const [riverImages, setRiverImages] = useState([]);
 
   const [nowSelectedCourse, setNowSelectedCourse] = useRecoilState(
     nowSelectedCourseState
@@ -24,7 +26,10 @@ export default function Page() {
         const dbRivers = await useNodePostApi("/api/river/findRivers");
         const rivers = dbRivers.data.data;
         setRiverList([...rivers]);
-        console.log(dbRivers);
+
+        const _riverId = rivers.map((r) => r._id);
+        setRiverIdArr([..._riverId]);
+        // console.log(dbRivers);
         if (dbRivers.status != 200) {
           throw new Error("Failed to fetch data");
         }
@@ -34,6 +39,57 @@ export default function Page() {
     }
     findRivers();
   }, []);
+
+  useEffect(() => {
+    async function findRiversImagesByIds(ids) {
+      const riverImages = [];
+      let _returnImages = [];
+
+      // 使用 Promise.all 遍歷所有 ID，並呼叫 findRiversImage 函數
+      await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const dbRivers = await useNodePostImageApi(
+              "/api/river/findRiverImageById",
+              {
+                id: id,
+              }
+            );
+
+            if (dbRivers.status !== 200) {
+              throw new Error("Failed to fetch data for ID: " + id);
+            }
+
+            const imageUrl = URL.createObjectURL(new Blob([dbRivers.data]));
+            const index = riverIdArr.findIndex((r) => r == id);
+            riverImages.push({ index: index, image: imageUrl });
+            riverImages.sort((a, b) => a.index - b.index);
+            // console.log("id", id, index, riverImages);
+            _returnImages = riverImages.map((r) => r.image);
+          } catch (err) {
+            console.log("Error fetching data for ID: " + id, err);
+          }
+        })
+      );
+
+      return _returnImages;
+    }
+    // 在你的組件中使用這個函數
+    async function fetchDataForMultipleIds() {
+      const idsToFetch = [...riverIdArr]; // 替換為你的 ID 列表
+
+      // console.log("idsToFetch", idsToFetch);
+      try {
+        const images = await findRiversImagesByIds(idsToFetch);
+        // console.log("images", images);
+
+        setRiverImages(images);
+      } catch (error) {
+        console.error("Error fetching data for multiple IDs:", error);
+      }
+    }
+    fetchDataForMultipleIds();
+  }, [riverIdArr]);
 
   useEffect(() => {
     setCookie("selected_course", nowSelectedCourse);
@@ -55,9 +111,9 @@ export default function Page() {
                 );
               }}
             >
-              <Image
+              <img
                 alt="river"
-                src={`/images/${river.pic_url}`}
+                src={riverImages[rIdx]}
                 width={244}
                 height={149}
                 className=" rounded"

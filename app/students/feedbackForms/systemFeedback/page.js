@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation.js";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
 import TextField from "@mui/material/TextField";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -20,6 +21,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id");
 
   const [open, setOpen] = useState(false);
 
@@ -116,6 +119,7 @@ function page() {
       class: backgroundInfoValue[2],
       score: [...otherQuestionsScore],
       totalScore: scoreReducer,
+      course_id: _id,
     };
     try {
       await useNodePostApi(
@@ -125,7 +129,7 @@ function page() {
       console.log("ok");
       setOpen(true);
       setTimeout(() => {
-        router.push("/students/courseRecords/workspace");
+        router.push(`/students/courseRecords/workspace?id=${_id}`);
       }, [1500]);
     } catch (err) {
       console.log("err", err);

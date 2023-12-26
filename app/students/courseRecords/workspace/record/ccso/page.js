@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation.js";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -28,6 +29,9 @@ import { getCookie } from "cookies-next";
 
 function page() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id");
 
   // 問卷基本選擇欄位
   const baseSelectNameArr = useRecoilValue(baseOptionsNameArrState);
@@ -251,7 +255,9 @@ function page() {
         <button
           className="flex w-[8rem] h-[2rem] rounded border-[1px] bg-white border-gray-500 text-lg text-primary_500 justify-center items-center"
           onClick={() => {
-            router.push(`/students/courseRecords/workspace/preview/ccso`);
+            router.push(
+              `/students/courseRecords/workspace/preview/ccso?id=${_id}`
+            );
           }}
         >
           提交

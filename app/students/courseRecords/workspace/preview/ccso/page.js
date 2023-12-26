@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation.js";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 // import { useToast } from "@chakra-ui/react";
 import Snackbar from "@mui/material/Snackbar";
@@ -29,6 +30,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id");
+
   const cookies = getCookies();
 
   const [open, setOpen] = useState(false);
@@ -124,6 +128,7 @@ function page() {
       picDesc: picDesc,
       picsUrl: [],
       studentInsights: studentInsights,
+      course_id: _id,
     };
     try {
       const images = await handleUpload();
@@ -132,7 +137,7 @@ function page() {
       await useNodePostApi("/api/record/newCcso", _newDatas);
       setOpen(true);
       setTimeout(() => {
-        router.push("/students/courseRecords/workspace");
+        router.push(`/students/courseRecords/workspace?id=${_id}`);
       }, [1500]);
     } catch (err) {
       console.log("err", err);
