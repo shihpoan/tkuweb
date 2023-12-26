@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 // 创建文档结构
 const MyDocument = ({ data }) => {
   const originalString = data.desc;
-  const urlPromise = data.qrCodeUrl ? QRCode.toDataURL(data.qrCodeUrl) : "1";
+  const urlPromise = data.qrCodeUrl ? QRCode.toDataURL(data.qrCodeUrl) : null;
 
   return (
     <Document>
@@ -84,21 +84,31 @@ const MyDocument = ({ data }) => {
           <Text style={styles.title}>
             {data.name ? data.name : "請輸入內容..."}
           </Text>
-          <Image
-            src={data.image.length ? data.image[0] : "1"}
-            style={{ width: "400px", height: "200px", marginBottom: "20px" }}
-          />
+          {console.log(data, "urlPromise", urlPromise, data.qrCodeUrl)}
+          {data.image.length ? (
+            <Image
+              src={data.image[0]}
+              style={{ width: "400px", height: "200px", marginBottom: "20px" }}
+            />
+          ) : (
+            <Image
+              src={"/images/river0001.jpg"}
+              style={{ width: "400px", height: "200px", marginBottom: "20px" }}
+            />
+          )}
+
           <Text style={styles.content}>{originalString}</Text>
           <Text style={styles.content2}>
             {!data.qrCodeUrl
               ? `請點選 "建立教學文件" 按鈕 產生課程及課程 QrCode`
               : "課程線上系統QrCode"}
           </Text>
-
-          <Image
-            src={urlPromise}
-            style={{ width: "100px", height: "100px", marginBottom: "20px" }}
-          />
+          {urlPromise ? (
+            <Image
+              src={urlPromise}
+              style={{ width: "100px", height: "100px", marginBottom: "20px" }}
+            />
+          ) : null}
         </View>
         {/* ...其他数据渲染 */}
       </Page>

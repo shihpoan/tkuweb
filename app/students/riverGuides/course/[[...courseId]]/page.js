@@ -30,7 +30,11 @@ function page({ params }) {
       // 保存当前页面路径，以便登录后可以返回
       const returnUrl = pathname;
       router.push(`/login?redirect=${encodeURIComponent(returnUrl)}`);
-      console.log("returnUrl", returnUrl);
+      console.log(
+        "returnUrl",
+        returnUrl,
+        `/login?redirect=${encodeURIComponent(returnUrl)}`
+      );
     }
   }, [router]);
 

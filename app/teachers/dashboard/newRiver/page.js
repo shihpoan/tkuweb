@@ -36,6 +36,15 @@ function page() {
 
   const [selectedFiles, setSelectedFiles] = useRecoilState(selectedFileState);
   const [selectedImage, setSelectedImages] = useRecoilState(selectedImageState);
+
+  useEffect(() => {
+    setData({
+      title: "init",
+      content: "",
+      // ...其他数据
+    });
+  }, []);
+
   useEffect(() => {
     setData({
       name: riverPlace,

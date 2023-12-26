@@ -21,7 +21,7 @@ export const slOptionsNameArrState = atom({
 // 個別問卷獨立選擇欄位名稱：rr(反思紀錄表)
 export const rrOptionsNameArrState = atom({
   key: "rrOptionsNameArrState",
-  default: ["主持人", "紀錄"],
+  default: ["授課老師", "紀錄"],
 });
 
 // 個別問卷獨立選擇欄位名稱：(學習歷程反思單)
