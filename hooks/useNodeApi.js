@@ -10,9 +10,23 @@ async function useNodeGetApi(apiPath, apiObj) {
   });
 }
 
+async function useNodeGetImageApi(apiPath, apiObj) {
+  return await axios.get(`${nodeServerPath}${apiPath}`, {
+    withCredentials: true,
+    responseType: "blob",
+  });
+}
+
 async function useNodePostApi(apiPath, apiObj) {
   return await axios.post(`${nodeServerPath}${apiPath}`, apiObj, {
     withCredentials: true,
+  });
+}
+
+async function useNodePostImageApi(apiPath, apiObj) {
+  return await axios.post(`${nodeServerPath}${apiPath}`, apiObj, {
+    withCredentials: true,
+    responseType: "blob",
   });
 }
 
@@ -31,6 +45,8 @@ async function useNodeDeleteApi(apiPath, apiObj) {
 module.exports = {
   useNodeGetApi,
   useNodePostApi,
+  useNodePostImageApi,
   useNodePatchApi,
   useNodeDeleteApi,
+  useNodeGetImageApi,
 };

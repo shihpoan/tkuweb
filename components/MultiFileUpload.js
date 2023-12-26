@@ -34,6 +34,11 @@ const MultiFileUpload = () => {
       }
     }
   }, [selectedFiles]);
+
+  useEffect(() => {
+    console.log("selectedImage", selectedImage);
+  }, [selectedImage]);
+
   const handleFileChange = (event) => {
     let files = [...event.target.files];
     let slicedFiles;

@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image.js";
 import Link from "next/link";
 
-import { getCookies } from "cookies-next";
+import { getCookies, setCookie } from "cookies-next";
 
-import { useNodePostApi } from "@/hooks/useNodeApi.js";
+import { useNodePostApi, useNodePostImageApi } from "@/hooks/useNodeApi.js";
 
 function page({ params }) {
   const router = useRouter();
@@ -14,6 +14,7 @@ function page({ params }) {
 
   const [courseId, setCourseId] = useState("");
   const [river, setRiver] = useState({});
+  const [riverImages, setRiverImages] = useState(null);
 
   const cookies = getCookies();
 
@@ -49,7 +50,29 @@ function page({ params }) {
         console.log("err", err);
       }
     }
-    findRiver();
+    if (courseId) findRiver();
+  }, [courseId]);
+
+  useEffect(() => {
+    async function findRiverImage() {
+      try {
+        const dbRivers = await useNodePostImageApi(
+          "/api/river/findRiverImageById",
+          {
+            id: courseId,
+          }
+        );
+        const imageUrl = URL.createObjectURL(new Blob([dbRivers.data]));
+        console.log("imageUrl", imageUrl, river);
+        setRiverImages(imageUrl);
+        if (dbRivers.statusText != "OK") {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (err) {
+        console.log("err", err);
+      }
+    }
+    if (courseId) findRiverImage();
   }, [courseId]);
 
   return (
@@ -69,7 +92,7 @@ function page({ params }) {
                 priority
                 width={244}
                 height={149}
-                src={"/images/庄子後溪.jpg"}
+                src={riverImages ? riverImages : "/images/river0001.jpg"}
                 alt="庄子後溪"
                 className="w-full h-full rounded"
               />
@@ -100,7 +123,7 @@ function page({ params }) {
           <div
             className="flex flex-col w-[10rem] h-[5rem] text-xl bg-primary_500 border-[1px] border-primary_200 rounded justify-center items-center px-2 py-4"
             onClick={() => {
-              router.push(`/students/privacyPolicy`);
+              router.push(`/students/privacyPolicy?id=${courseId}`);
             }}
           >
             <p>填寫學習</p>

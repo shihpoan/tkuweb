@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation.js";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import { getCookie } from "cookies-next";
 
@@ -8,6 +8,10 @@ import { useNodePostApi } from "@/hooks/useNodeApi.js";
 
 function page() {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const _id = searchParams.get("id");
+
   const _student_tier = getCookie("student_tier");
   const _student_id = getCookie("student_id");
 
@@ -16,7 +20,7 @@ function page() {
       color: "bg-primary_500",
       text: "學習歷程反思單(個人)",
       code: "cslr",
-      url: "/students/courseRecords/workspace/record/cslr?title=學習歷程反思單",
+      url: `/students/courseRecords/workspace/record/cslr?title=學習歷程反思單&id=${_id}`,
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -24,7 +28,7 @@ function page() {
       color: "bg-primary_500",
       text: "服務日誌(個人)",
       code: "serviceLogs",
-      url: "/students/courseRecords/workspace/record/serviceLogs?title=服務日誌",
+      url: `/students/courseRecords/workspace/record/serviceLogs?title=服務日誌&id=${_id}`,
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -32,7 +36,7 @@ function page() {
       color: "bg-primary_500",
       text: "反思討論紀錄表(小組)",
       code: "reflectionRecords",
-      url: "/students/courseRecords/workspace/record/reflectionRecords?title=反思討論紀錄表",
+      url: `/students/courseRecords/workspace/record/reflectionRecords?title=反思討論紀錄表&id=${_id}`,
       tier: ["leader"],
       isShown: true,
     },
@@ -40,7 +44,7 @@ function page() {
       color: "bg-primary_500",
       text: "服務成果表(小組)",
       code: "ccso",
-      url: "/students/courseRecords/workspace/record/ccso?title=服務成果表",
+      url: `/students/courseRecords/workspace/record/ccso?title=服務成果表&id=${_id}`,
       tier: ["leader"],
       isShown: true,
     },
@@ -48,7 +52,7 @@ function page() {
       color: "bg-primary_500",
       text: "課程滿意度調查",
       code: "course",
-      url: "/students/feedbackForms/courseFeedback?title=課程滿意度調查",
+      url: `/students/feedbackForms/courseFeedback?title=課程滿意度調查&id=${_id}`,
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -56,7 +60,7 @@ function page() {
       color: "bg-primary_500",
       text: "系統滿意度調查",
       code: "system",
-      url: "/students/feedbackForms/systemFeedback?title=系統滿意度調查",
+      url: `/students/feedbackForms/systemFeedback?title=系統滿意度調查&id=${_id}`,
       tier: ["members", "leader"],
       isShown: true,
     },
@@ -70,18 +74,6 @@ function page() {
   const [isSystemFeedbacksExistedState, setIsSystemFeedbacksExistedState] =
     useState(true);
 
-  // useEffect(() => {
-  //   const _datas = [...btnStyledAndDataArr];
-
-  //   if (_datas.length) {
-  //     const dataTierFilter = _datas.filter((data) =>
-  //       data.tier.find((i) => i == _student_tier)
-  //     );
-  //     console.log("dataTierFilter", dataTierFilter);
-  //     setBtnStyledAndDataArr([...dataTierFilter]);
-  //   }
-  // }, []);
-
   useEffect(() => {
     async function findDbData(route1, route2) {
       const dbDatas = await useNodePostApi(`/api/${route1}/find${route2}`);
@@ -89,7 +81,9 @@ function page() {
       const data = dbDatas.data.data;
       console.log("data", data);
 
-      const indexOfData = data.findIndex((i) => i.student_id == _student_id);
+      const indexOfData = data.findIndex(
+        (i) => i.student_id == _student_id && i.course_id == _id
+      );
       console.log("indexOfData", indexOfData);
       if (indexOfData + 1 > 0) {
         switch (route2) {
