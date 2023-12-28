@@ -116,7 +116,7 @@ function page({ params }) {
         </div>
         <div className="flex w-[100%] min-h-[15%] bg-white justify-center items-center gap-2">
           <Link
-            href="https://vr360.com.tw/d?sid=2RnNa2HC"
+            href={`${river._360_url}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col w-[10rem] h-[5rem] bg-primary_500 border-[1px] border-primary_200 text-xl rounded justify-center items-center px-2 py-4"
