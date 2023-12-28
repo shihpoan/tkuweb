@@ -172,7 +172,9 @@ function page() {
       console.log("ok");
       setOpen(true);
       setTimeout(() => {
-        router.push(`/students/courseRecords/workspace?id=${_id}`);
+        router.push(
+          `/students/courseRecords/workspace?id=${_id}&teacher_id=${teacher_id}`
+        );
       }, [1500]);
     } catch (err) {
       console.log("err", err);
