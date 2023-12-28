@@ -31,6 +31,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   const cookies = getCookies();
 
@@ -61,6 +62,7 @@ function page() {
       q5: q5,
       q6: q6,
       course_id: _id,
+      teacher_id: teacher_id,
     };
     try {
       await useNodePostApi("/api/record/newCslr", _newDatas);

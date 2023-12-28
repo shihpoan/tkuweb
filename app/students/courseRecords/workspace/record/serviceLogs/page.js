@@ -27,6 +27,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   // 問卷基本選擇欄位
   const baseSelectNameArr = useRecoilValue(baseOptionsNameArrState);
@@ -257,7 +258,7 @@ function page() {
           className="flex w-[8rem] h-[2rem] rounded border-[1px] bg-white border-gray-500 text-lg text-primary_500 justify-center items-center"
           onClick={() => {
             router.push(
-              `/students/courseRecords/workspace/preview/serviceLogs?id=${_id}`
+              `/students/courseRecords/workspace/preview/serviceLogs?id=${_id}&teacher_id=${teacher_id}`
             );
           }}
         >

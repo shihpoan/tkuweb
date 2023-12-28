@@ -26,6 +26,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   const cookies = getCookies();
 
@@ -50,6 +51,7 @@ function page() {
       participants: participants,
       discussionTopicAndContent: discussionTopicAndContent,
       course_id: _id,
+      teacher_id: teacher_id,
     };
     try {
       await useNodePostApi("/api/record/newRr", _newDatas);

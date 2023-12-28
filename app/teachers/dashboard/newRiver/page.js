@@ -5,6 +5,7 @@ import { pdf } from "@react-pdf/renderer";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import { getCookie } from "cookies-next";
 
 import { useRecoilState } from "recoil";
 import {
@@ -135,10 +136,12 @@ function page() {
   };
 
   async function handlsSubmit() {
+    const _teacher_id = getCookie("teacher_id");
     let _newDatas = {
       ...data,
       pic_url: "",
       image: null,
+      teacher_id: _teacher_id,
     };
     try {
       const images = await handleUpload();

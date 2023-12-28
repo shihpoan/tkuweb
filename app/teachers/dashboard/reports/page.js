@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation.js";
+import { getCookie } from "cookies-next";
 
 import Drawer from "@mui/material/Drawer";
 import { DataGrid } from "@mui/x-data-grid";
@@ -13,6 +14,7 @@ function createData(id, student_id, name, _class, report, river, photo, score) {
 
 export default function BasicTable() {
   const router = useRouter();
+  const teacher_id = getCookie("teacher_id");
 
   const [open, setOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("服務成果表");
@@ -25,6 +27,10 @@ export default function BasicTable() {
   const [rrPrintList, setRrPrintList] = useState([]);
   const [slList, setSlList] = useState([]);
   const [slPrintList, setSlPrintList] = useState([]);
+  const [courseFeedbackList, setCourseFeedbackList] = useState([]);
+  const [courseFeedbackPrintList, setCourseFeedbackPrintList] = useState([]);
+  const [systemFeedbackList, setSystemFeedbackList] = useState([]);
+  const [systemFeedbackPrintList, setSystemFeedbackPrintList] = useState([]);
 
   const [mixDatas, setMixDatas] = useState([]);
   const [originalDatas, setOriginalDatas] = useState([]);
@@ -40,19 +46,53 @@ export default function BasicTable() {
         const dbCslr = await useNodePostApi("/api/record/findCslr");
         const dbRr = await useNodePostApi("/api/record/findRr");
         const dbSl = await useNodePostApi("/api/record/findSl");
-        const Ccso = dbCcso.data.data;
-        const Cslr = dbCslr.data.data;
-        const Rr = dbRr.data.data;
-        const Sl = dbSl.data.data;
+        const dbCf = await useNodePostApi(
+          "/api/courseFeedback/findCourseFeedbacks"
+        );
+        const dbSf = await useNodePostApi(
+          "/api/systemFeedback/findSystemFeedbacks"
+        );
+        const Ccso = [...dbCcso.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+        const Cslr = [...dbCslr.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+        const Rr = [...dbRr.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+        const Sl = [...dbSl.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+        const Cf = [...dbCf.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+        const Sf = [...dbSf.data.data].reduce((acc, curr) => {
+          if (curr.teacher_id === teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
         // setRiverList([...rivers]);
         setCcsoList([...Ccso]);
         setCslrList([...Cslr]);
         setRrList([...Rr]);
         setSlList([...Sl]);
-        console.log("Ccso", Ccso);
-        console.log("Cslr", Cslr);
-        console.log("Rr", Rr);
-        console.log("Sl", Sl);
+        setCourseFeedbackList([...Cf]);
+        setSystemFeedbackList([...Sf]);
+        // console.log("Ccso", Ccso);
+        // console.log("Cslr", Cslr);
+        // console.log("Rr", Rr);
+        // console.log("Sl", Sl);
       } catch (err) {
         console.log("err", err);
       }
@@ -61,7 +101,14 @@ export default function BasicTable() {
   }, []);
 
   useEffect(() => {
-    const _mixArray = [...ccsoList, ...cslrList, ...rrList, ...slList];
+    const _mixArray = [
+      ...ccsoList,
+      ...cslrList,
+      ...rrList,
+      ...slList,
+      ...courseFeedbackList,
+      ...systemFeedbackList,
+    ];
     setOriginalDatas([..._mixArray]);
     console.log("sss", _mixArray);
     const dataReducer = _mixArray.reduce((acc, curr) => {
@@ -71,8 +118,9 @@ export default function BasicTable() {
         student_name,
         reportName,
         river_id,
+        place,
         picsUrl,
-        score,
+        totalScore,
       } = curr;
       const _class = curr.class;
       const returnDatas = {
@@ -82,19 +130,26 @@ export default function BasicTable() {
         _class,
         reportName,
         river_id,
+        place,
         picsUrl,
-        score,
+        totalScore,
       };
-
       acc.push(returnDatas);
 
       return acc;
     }, []);
 
-    console.log("dataReducer", dataReducer);
+    // console.log("dataReducer", dataReducer);
 
     setMixDatas([...dataReducer]);
-  }, [ccsoList, cslrList, rrList, slList]);
+  }, [
+    ccsoList,
+    cslrList,
+    rrList,
+    slList,
+    courseFeedbackList,
+    systemFeedbackList,
+  ]);
 
   useEffect(() => {
     const _row = mixDatas.map((d) =>
@@ -104,12 +159,12 @@ export default function BasicTable() {
         d.student_name,
         d._class,
         d.reportName,
-        d.river_id,
+        d.river_id ? d.river_id : d.place,
         d.picsUrl ? d.picsUrl.length : 0,
-        d.score
+        d.totalScore
       )
     );
-    console.log("row", _row);
+    // console.log("row", _row);
 
     const rowReducer = _row.reduce((acc, curr) => {
       const currList = curr.report;
@@ -140,6 +195,12 @@ export default function BasicTable() {
       case "學習歷程反思單":
         setCslrPrintList([...result]);
         break;
+      case "課程滿意度調查表":
+        setCourseFeedbackPrintList([...result]);
+        break;
+      case "系統滿意度調查表":
+        setSystemFeedbackPrintList([...result]);
+        break;
     }
   }, [selectionModel, selectedList]);
 
@@ -147,14 +208,6 @@ export default function BasicTable() {
     setSelectionModel(newSelectionModel);
     // 可以在這裡進行進一步的處理，比如將選擇的行的數據傳遞給其他組件
   };
-
-  async function testDownload() {
-    try {
-      const test = await useNodeGetApi("/download-csv");
-    } catch (err) {
-      console.log("err", err);
-    }
-  }
 
   function downloadCSV() {
     const csvBaseTitle = ["學號,姓名,系班級,課程地點,課程日期,"];
@@ -170,12 +223,12 @@ export default function BasicTable() {
     const cslrTitle =
       "學年,學期,在本次社區服務中，你印象最深刻的畫面是什麼？為什麼？,對你而言，這次的社區服務有什麼意義？在本次社區服務後，你願不願意參與更多的志工服務？,請用一句話來形容本學期參與社區服務的感覺，為什麼是這句話？,在本次社區服務裡，你覺得感到最具挑戰性的地方是什麼？為什麼？,在這個社區服務中，你對自己有什麼新的認識？,在這次社區服務中，你覺得我們有沒有什麼可以更努力的地方？";
 
-    // // 將數據轉換為 CSV 格式的字符串
-    // const csvRows = [
-    //   "id,姓名,age", // CSV 標題
-    //   // 數據行
-    //   ...data.map((item) => [item.id, item.name, item.age].join(",")),
-    // ];
+    // 課程滿意度問卷
+    const courseFeedbackTitle = `性別,宗教,服務經驗,服務地點,我認為課程安排的服務內容是經過規劃設計。,我覺得這樣的課程安排，與校內打掃服務不同，對我有所助益。,我認為和其它課程相比，這門課的執行難度較高。,進行服務前的專業培訓課程能增加我的專業知識。,我對這門課程的總體評價持肯定態度。,我覺得任課教師有充分解說課程內容，讓我在實作前能有所準備。,在前往機構服務前，教師對服務機構已進行詳細介紹。,教師給予我們足夠的教學支援。,我覺得我和教師在課堂中的互動良好。,我覺得任課教師對於服務學習課程的教學態度認真負責。,我從服務學習課程中，學習到關心社區的需求與問題。,我認為自己的服務對服務對象是有幫助的。,透過本次服務學習，提升我的人際相處能力。,服務過程中我不在意得到物質回饋。,服務過程中，我能以得體有禮的方式與人互動。,我能從服務學習課程中，學習尊重不同於自己生活背景的人。,透過服務學習課程，可以讓我體悟到「從服務-到學習」歷程的感動。,透過服務學習反思，我覺得可以從不同角度去思考問題。,透過服務學習反思，我覺得可以接受不一樣的意見。,透過服務學習反思，我覺得可以改變自己。,未來大學三年我會再修習服務學習之相關課程。,以後若有服務學習的相關活動，我願意主動參加。,未來我會鼓勵其他人參與相關服務活動。,我能從服務學習課程中，培養「責任感」。,我能從服務學習課程中，培養「公民意識」。,總分`;
+
+    // 系統滿意度調查表
+    const systemFeedbackTitle =
+      "整體來說，您對系統是否滿意？,系統是否容易學習使用？,系統是否符合需求？,整體來說，您對系統畫面是否滿意？,您對本系統是否有其他想法？,總分";
 
     let _csvRows = [];
 
@@ -207,7 +260,7 @@ export default function BasicTable() {
         _datas = rrPrintList.length ? [...rrPrintList] : [...rrList];
         _csvRows = [
           csvBaseTitle + rrTitle,
-          ...rrList.map((item) =>
+          ..._datas.map((item) =>
             [
               item.student_id,
               item.student_name,
@@ -226,7 +279,7 @@ export default function BasicTable() {
         _datas = slPrintList.length ? [...slPrintList] : [...slList];
         _csvRows = [
           csvBaseTitle + slTitle,
-          ...slList.map((item) =>
+          ..._datas.map((item) =>
             [
               item.student_id,
               item.student_name,
@@ -248,7 +301,7 @@ export default function BasicTable() {
         _datas = cslrPrintList.length ? [...cslrPrintList] : [...cslrList];
         _csvRows = [
           csvBaseTitle + cslrTitle,
-          ...cslrList.map((item) =>
+          ..._datas.map((item) =>
             [
               item.student_id,
               item.student_name,
@@ -263,6 +316,76 @@ export default function BasicTable() {
               item.q4,
               item.q5,
               item.q6,
+            ].join(",")
+          ),
+        ];
+        break;
+      case "課程滿意度調查表":
+        _datas = courseFeedbackPrintList.length
+          ? [...courseFeedbackPrintList]
+          : [...courseFeedbackList];
+        _csvRows = [
+          csvBaseTitle + courseFeedbackTitle,
+          ..._datas.map((item) =>
+            [
+              item.student_id,
+              item.student_name,
+              item.class,
+              item.place,
+              item.date,
+              item.gender,
+              item.religion,
+              item.experience,
+              item.place,
+              item.score[0],
+              item.score[1],
+              item.score[2],
+              item.score[3],
+              item.score[4],
+              item.score[5],
+              item.score[6],
+              item.score[7],
+              item.score[8],
+              item.score[9],
+              item.score[10],
+              item.score[11],
+              item.score[12],
+              item.score[13],
+              item.score[14],
+              item.score[15],
+              item.score[16],
+              item.score[17],
+              item.score[18],
+              item.score[19],
+              item.score[20],
+              item.score[21],
+              item.score[22],
+              item.score[23],
+              item.score[24],
+              item.totalScore,
+            ].join(",")
+          ),
+        ];
+        break;
+      case "系統滿意度調查表":
+        _datas = systemFeedbackPrintList.length
+          ? [...systemFeedbackPrintList]
+          : [...systemFeedbackList];
+        _csvRows = [
+          csvBaseTitle + systemFeedbackTitle,
+          ..._datas.map((item) =>
+            [
+              item.student_id,
+              item.student_name,
+              item.class,
+              item.place,
+              item.date,
+              item.score[0],
+              item.score[1],
+              item.score[2],
+              item.score[3],
+              item.score[4],
+              item.totalScore,
             ].join(",")
           ),
         ];
@@ -291,13 +414,6 @@ export default function BasicTable() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }
-
-  // // 示例數據
-  // const data = [
-  //   { id: 1, name: "Alice", age: 21 },
-  //   { id: 2, name: "Bob", age: 22 },
-  //   // ... 其他數據
-  // ];
 
   const columns = [
     // { field: "id", headerName: "ID", width: 150 },
@@ -347,6 +463,8 @@ export default function BasicTable() {
             <option>反思討論紀錄表</option>
             <option>服務日誌</option>
             <option>學習歷程反思單</option>
+            <option>課程滿意度調查表</option>
+            <option>系統滿意度調查表</option>
           </select>
         </div>
         <div

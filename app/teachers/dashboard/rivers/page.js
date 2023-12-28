@@ -1,11 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation.js";
+import { getCookie } from "cookies-next";
 
 import { useNodePostApi } from "@/hooks/useNodeApi.js";
 
 export default function Page() {
   const router = useRouter();
+
+  const teacher_id = getCookie("teacher_id");
 
   const [riverList, setRiverList] = useState([]);
 
@@ -14,7 +17,15 @@ export default function Page() {
       try {
         const dbRivers = await useNodePostApi("/api/river/findRivers");
         const rivers = dbRivers.data.data;
-        setRiverList([...rivers]);
+
+        const riverTeacherIdReducer = rivers.reduce((acc, curr) => {
+          const _teacher_id = curr.teacher_id;
+          if (teacher_id == _teacher_id) acc.push(curr);
+
+          return acc;
+        }, []);
+
+        setRiverList([...riverTeacherIdReducer]);
         console.log(rivers);
         if (dbRivers.statusText != "OK") {
           throw new Error("Failed to fetch data");

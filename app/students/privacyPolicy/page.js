@@ -7,6 +7,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   return (
     <div className="flex flex-col bg-primary_500 pb-4 items-center">
@@ -14,7 +15,9 @@ function page() {
       <button
         className="flex w-max h-[3rem] font-bold bg-primary_500 border-[1px] border-white rounded px-2 justify-center items-center"
         onClick={() => {
-          router.push(`/students/courseRecords/workspace?id=${_id}`);
+          router.push(
+            `/students/courseRecords/workspace?id=${_id}&teacher_id=${teacher_id}`
+          );
         }}
       >
         我同意個資蒐集
