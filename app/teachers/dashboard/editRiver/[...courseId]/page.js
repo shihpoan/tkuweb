@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation.js";
+
 import PDFViewer from "@/components/PDFViewer.js";
 import { pdf } from "@react-pdf/renderer";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
@@ -18,6 +20,7 @@ import {
   useNodeGetApi,
   useNodePostApi,
   useNodePostImageApi,
+  useNodeDeleteApi,
 } from "@/hooks/useNodeApi.js";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -25,6 +28,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function page({ params }) {
+  const router = useRouter();
+
   const courseId = params.courseId;
   const [pdfUrl, setPdfUrl] = useState("");
   const [riverImages, setRiverImages] = useState(null);
@@ -97,6 +102,18 @@ function page({ params }) {
     const url = URL.createObjectURL(blob);
     setPdfUrl(url);
   };
+
+  const deleteRiver = async () => {
+    try {
+      await useNodeDeleteApi(`/api/river/${courseId}`);
+      alert("刪除成功");
+      router.push("/teachers/dashboard/rivers");
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
+  useNodeDeleteApi;
   return (
     <>
       <div className="flex flex-col flex-grow w-[100%] h-[100%] text-2xl justify-start items-start lg:items-center px-4 py-4 gap-4 overflow-auto">
@@ -158,15 +175,23 @@ function page({ params }) {
         <div className="flex flex-col w-[100%] h-max lg:w-[50%] gap-2">
           <h2>教學文件</h2>
           {pdfUrl && (
-            <div className="w-max h-max">
+            <div className="h-max">
               <iframe
                 src={pdfUrl}
-                width="800"
+                width="880"
                 height="1200"
                 style={{ border: "none" }}
               />
             </div>
           )}
+        </div>
+        <div className="flex flex-col w-[100%] h-max lg:w-[50%] gap-2">
+          <button
+            className="h-[4rem] border-[1px] border-white px-2"
+            onClick={deleteRiver}
+          >
+            刪除
+          </button>
         </div>
       </div>
     </>

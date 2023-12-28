@@ -127,7 +127,9 @@ function page({ params }) {
           <div
             className="flex flex-col w-[10rem] h-[5rem] text-xl bg-primary_500 border-[1px] border-primary_200 rounded justify-center items-center px-2 py-4"
             onClick={() => {
-              router.push(`/students/privacyPolicy?id=${courseId}`);
+              router.push(
+                `/students/privacyPolicy?id=${courseId}&teacher_id=${river.teacher_id}`
+              );
             }}
           >
             <p>填寫學習</p>

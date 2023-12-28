@@ -42,16 +42,22 @@ function Login() {
       });
       const userDatas = userDbDatas.data.data;
       const acc = userDatas.acc;
-      const teacher_id = userDatas.user.account;
+      const teacher_id = userDatas.user._id;
       const teacher_name = userDatas.user.name;
-      // console.log("loginPage userData", userDatas);
-      setCookie("acc_tku", acc, { maxAge: 60 * 60 * 2 });
-      setCookie("teacher_id", teacher_id, { maxAge: 60 * 60 * 2 });
-      setCookie("teacher_name", teacher_name, { maxAge: 60 * 60 * 2 });
-      // console.log("pathname", pathname, redirect);
-      // console.log("pathname.query.redirect", pathname.query.redirect);
-      const redirectUrl = "teachers/home";
-      router.push(decodeURIComponent(redirectUrl));
+      const tier = userDatas.user.tier;
+      console.log("loginPage userData", userDatas);
+
+      if (tier == "teacher") {
+        setCookie("acc_tku", acc, { maxAge: 60 * 60 * 12 });
+        setCookie("teacher_id", teacher_id, { maxAge: 60 * 60 * 12 });
+        setCookie("teacher_name", teacher_name, { maxAge: 60 * 60 * 12 });
+        // console.log("pathname", pathname, redirect);
+        // console.log("pathname.query.redirect", pathname.query.redirect);
+        const redirectUrl = "teachers/home";
+        router.push(decodeURIComponent(redirectUrl));
+      } else {
+        alert("帳號或密碼錯誤");
+      }
     } catch (err) {
       setIsErrorLogin(true);
       console.log("err", err);

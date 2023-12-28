@@ -32,6 +32,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   const cookies = getCookies();
 
@@ -123,12 +124,13 @@ function page() {
       river_id: autoCompleteTextField[1],
       class: autoCompleteTextField[2],
       date: autoCompleteTextField[3],
-      teacher_id: autoCompleteTextField[4],
+      teacher_name: autoCompleteTextField[4],
       execution_results: executionResults,
       picDesc: picDesc,
       picsUrl: [],
       studentInsights: studentInsights,
       course_id: _id,
+      teacher_id: teacher_id,
     };
     try {
       const images = await handleUpload();

@@ -22,6 +22,7 @@ function page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
+  const teacher_id = searchParams.get("teacher_id");
 
   const [open, setOpen] = useState(false);
 
@@ -161,6 +162,7 @@ function page() {
       score: [...otherQuestionsScore],
       totalScore: scoreReducer,
       course_id: _id,
+      teacher_id: teacher_id,
     };
     try {
       await useNodePostApi(
@@ -170,7 +172,7 @@ function page() {
       console.log("ok");
       setOpen(true);
       setTimeout(() => {
-        rrouter.push(`/students/courseRecords/workspace?id=${_id}`);
+        router.push(`/students/courseRecords/workspace?id=${_id}`);
       }, [1500]);
     } catch (err) {
       console.log("err", err);

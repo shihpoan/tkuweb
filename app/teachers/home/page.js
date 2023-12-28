@@ -2,6 +2,8 @@
 import React from "react";
 import { useRouter } from "next/navigation.js";
 
+import { deleteCookie } from "cookies-next";
+
 function page() {
   const router = useRouter();
   return (
@@ -25,6 +27,16 @@ function page() {
           }}
         >
           學習紀錄
+        </button>
+        <button
+          className="w-[10rem] text-2xl text-gray-800 border-[2px] border-black bg-white rounded p-2 mt-[10rem]"
+          onClick={() => {
+            deleteCookie("teacher_id");
+            deleteCookie("teacher_name");
+            router.push("/");
+          }}
+        >
+          登出
         </button>
       </div>
     </div>
