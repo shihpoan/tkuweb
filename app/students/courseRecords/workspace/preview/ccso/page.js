@@ -162,7 +162,7 @@ function page() {
   return (
     <div
       id="container"
-      className="flex flex-col w-screen min-h-screen text-primary_500 bg-white justify-between items-stretch overflow-auto pt-[3.5rem]"
+      className="flex flex-col w-full min-h-screen text-primary_500 bg-white justify-between items-stretch overflow-auto pt-[3.5rem]"
     >
       <div
         id="back"

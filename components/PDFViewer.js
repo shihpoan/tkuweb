@@ -76,6 +76,16 @@ const styles = StyleSheet.create({
 const MyDocument = ({ data }) => {
   const originalString = data.desc;
   const urlPromise = data.qrCodeUrl ? QRCode.toDataURL(data.qrCodeUrl) : null;
+  const _360urlArr = data._360_url.split(",");
+  const _360urlPromise0 = _360urlArr[0]
+    ? QRCode.toDataURL(_360urlArr[0])
+    : null;
+  const _360urlPromise1 = _360urlArr[1]
+    ? QRCode.toDataURL(_360urlArr[1])
+    : null;
+  const _360urlPromise2 = _360urlArr[2]
+    ? QRCode.toDataURL(_360urlArr[2])
+    : null;
 
   return (
     <Document>
@@ -84,7 +94,14 @@ const MyDocument = ({ data }) => {
           <Text style={styles.title}>
             {data.name ? data.name : "請輸入內容..."}
           </Text>
-          {console.log(data, "urlPromise", urlPromise, data.qrCodeUrl)}
+          {console.log(
+            data,
+            "urlPromise",
+            urlPromise,
+            data.qrCodeUrl,
+            "ddd",
+            _360urlArr
+          )}
           {data.image.length ? (
             <Image
               src={data.image[0]}
@@ -103,12 +120,64 @@ const MyDocument = ({ data }) => {
               ? `請點選 "建立教學文件" 按鈕 產生課程及課程 QrCode`
               : "課程線上系統QrCode"}
           </Text>
-          {urlPromise ? (
-            <Image
-              src={urlPromise}
-              style={{ width: "100px", height: "100px", marginBottom: "20px" }}
-            />
-          ) : null}
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            {urlPromise ? (
+              <>
+                <Text style={styles.content}>課程線上url</Text>
+                <Image
+                  src={urlPromise}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    marginBottom: "20px",
+                  }}
+                />
+              </>
+            ) : null}
+          </View>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            {_360urlPromise0 ? (
+              <>
+                <Text style={styles.content}>360url_1</Text>
+                <Image
+                  src={_360urlPromise0}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    marginBottom: "20px",
+                  }}
+                />
+              </>
+            ) : null}
+            {_360urlPromise1 ? (
+              <>
+                <Text style={styles.content}>360url_2</Text>
+
+                <Image
+                  src={_360urlPromise1}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    marginBottom: "20px",
+                  }}
+                />
+              </>
+            ) : null}
+            {_360urlPromise2 ? (
+              <>
+                <Text style={styles.content}>360url_3</Text>
+
+                <Image
+                  src={_360urlPromise2}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    marginBottom: "20px",
+                  }}
+                />
+              </>
+            ) : null}
+          </View>
         </View>
         {/* ...其他数据渲染 */}
       </Page>

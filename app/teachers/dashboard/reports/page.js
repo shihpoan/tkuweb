@@ -6,7 +6,11 @@ import { getCookie } from "cookies-next";
 import Drawer from "@mui/material/Drawer";
 import { DataGrid } from "@mui/x-data-grid";
 
-import { useNodePostApi, useNodeGetApi } from "@/hooks/useNodeApi.js";
+import {
+  useNodePostApi,
+  useNodeGetApi,
+  useNodePostImageApi,
+} from "@/hooks/useNodeApi.js";
 
 function createData(id, student_id, name, _class, report, river, photo, score) {
   return { id, student_id, name, _class, report, river, photo, score };
@@ -38,6 +42,8 @@ export default function BasicTable() {
   const [rows, setRows] = useState([]);
 
   const [selectionModel, setSelectionModel] = useState([]);
+  const [imageUrl, setImageUrl] = useState([]);
+  const [ccsoPreview, setCcsoPreview] = useState(null);
 
   useEffect(() => {
     async function findRecords() {
@@ -415,6 +421,53 @@ export default function BasicTable() {
     URL.revokeObjectURL(url);
   }
 
+  async function handleOpen() {
+    if (selectedList == "服務成果表" && selectionModel.length == 1) {
+      console.log("0", selectionModel[0]);
+      try {
+        const ccsoData = await useNodePostApi("/api/record/findCcsoById", {
+          id: selectionModel[0],
+        });
+
+        setCcsoPreview({ ...ccsoData.data.data });
+
+        const images_url = ccsoData.data.data.picsUrl;
+
+        await Promise.all(
+          images_url.map(async (url, uIdx) => {
+            console.log("images_url", images_url, uIdx);
+            try {
+              const ccsoImage = await useNodePostImageApi(
+                "/api/record/findCcsoRecordImageById",
+                {
+                  id: selectionModel[0],
+                  index: uIdx,
+                }
+              );
+              const imageUrl = URL.createObjectURL(new Blob([ccsoImage.data]));
+              console.log("ccsoImage", imageUrl);
+              setImageUrl((prevImage) => [...prevImage, imageUrl]);
+            } catch (err) {
+              console.log("err", err);
+            }
+          })
+        );
+
+        setOpen(!open);
+      } catch (err) {
+        console.log("err", err);
+      }
+    } else if (selectionModel.length > 1) {
+      alert("僅支援單份表單查詢");
+    } else {
+      alert("此表單無照片或尚未選擇需要查看的表單！");
+    }
+  }
+
+  useEffect(() => {
+    console.log("imageUrl", imageUrl);
+  }, [imageUrl]);
+
   const columns = [
     // { field: "id", headerName: "ID", width: 150 },
     { field: "student_id", headerName: "學號", width: 100 },
@@ -517,10 +570,10 @@ export default function BasicTable() {
               >
                 <div className="flex justify-between">
                   <div className="flex flex-col text-xl gap-2">
-                    <p>學號：</p>
-                    <p>姓名：</p>
-                    <p>日期：</p>
-                    <p>課程地點：</p>
+                    <p>學號：{!ccsoPreview ? "" : ccsoPreview.student_id}</p>
+                    <p>姓名：{!ccsoPreview ? "" : ccsoPreview.student_name}</p>
+                    <p>日期：{!ccsoPreview ? "" : ccsoPreview.date}</p>
+                    <p>課程地點：{!ccsoPreview ? "" : ccsoPreview.river_id}</p>
                   </div>
                 </div>
               </div>
@@ -534,15 +587,14 @@ export default function BasicTable() {
                 >
                   <p className="text-black font-bold">上傳照片</p>
                   <div className="flex flex-wrap">
-                    {/* {selectedImage.map((image, index) => (
+                    {imageUrl.map((image, iIdx) => (
                       <img
-                        key={index}
+                        key={iIdx}
                         src={image}
-                        alt={`Preview ${index}`}
-                        style={{ maxWidth: "95px", margin: "5px" }}
+                        alt={`Preview`}
+                        style={{ maxWidth: "400px", margin: "5px" }}
                       />
-                    ))} */}
-                    123
+                    ))}
                   </div>
                 </div>
               </div>
@@ -563,7 +615,7 @@ export default function BasicTable() {
         <button
           className="text-4xl font-bold border-[2px] border-gray-800 bg-white rounded p-2"
           onClick={() => {
-            setOpen(!open);
+            handleOpen();
           }}
         >
           開啟紀錄
