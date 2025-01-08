@@ -12,6 +12,8 @@ import {
   useNodePostImageApi,
 } from "@/hooks/useNodeApi.js";
 
+import * as XLSX from "xlsx";
+
 function createData(id, student_id, name, _class, report, river, photo, score) {
   return { id, student_id, name, _class, report, river, photo, score };
 }
@@ -421,6 +423,132 @@ export default function BasicTable() {
     URL.revokeObjectURL(url);
   }
 
+  function downloadExcel() {
+    const csvBaseTitle = ["學號", "姓名", "系班級", "課程地點", "課程日期"];
+    const ccsoTitle = [
+      "任課教官",
+      "執行成果重點說明",
+      "成果照片相關說明",
+      "照片張數",
+      "學生心得",
+    ];
+    const rrTitle = ["授課老師", "紀錄", "參與人員", "討論主題與內容"];
+    const slTitle = [
+      "服務時數",
+      "被服務人數",
+      "服務機構",
+      "資料呈現方式",
+      "服務內容與學習要點",
+      "服務反思",
+      "心得隨寫",
+    ];
+    const cslrTitle = [
+      "學年",
+      "學期",
+      "印象最深刻的畫面",
+      "意義",
+      "參與意願",
+      "感覺描述",
+      "挑戰",
+      "自我認識",
+      "改進建議",
+    ];
+    const courseFeedbackTitle = [
+      "性別",
+      "宗教",
+      "服務經驗",
+      "服務地點",
+      "課程安排服務內容設計",
+      "課程安排助益",
+      "執行難度",
+      "專業培訓",
+      "總體評價",
+      "教學準備",
+      "服務前介紹",
+      "教學支援",
+      "互動良好",
+      "教學態度",
+      "學習關心社區需求",
+      "服務對象幫助",
+      "人際能力提升",
+      "不重物質回饋",
+      "互動方式",
+      "尊重多元背景",
+      "歷程感動",
+      "多角度思考",
+      "接受意見",
+      "自我改變",
+      "未來修課意願",
+      "活動參加意願",
+      "鼓勵他人參與",
+      "責任感",
+      "公民意識",
+      "總分",
+    ];
+    const systemFeedbackTitle = [
+      "整體滿意度",
+      "易學易用",
+      "需求符合",
+      "畫面滿意度",
+      "其他意見",
+      "總分",
+    ];
+
+    let data = [];
+    let headers = [];
+    switch (selectedList) {
+      case "服務成果表":
+        headers = [...csvBaseTitle, ...ccsoTitle];
+        data = ccsoPrintList.length ? [...ccsoPrintList] : [...ccsoList];
+        break;
+      case "反思討論紀錄表":
+        headers = [...csvBaseTitle, ...rrTitle];
+        data = rrPrintList.length ? [...rrPrintList] : [...rrList];
+        break;
+      case "服務日誌":
+        headers = [...csvBaseTitle, ...slTitle];
+        data = slPrintList.length ? [...slPrintList] : [...slList];
+        break;
+      case "學習歷程反思單":
+        headers = [...csvBaseTitle, ...cslrTitle];
+        data = cslrPrintList.length ? [...cslrPrintList] : [...cslrList];
+        break;
+      case "課程滿意度調查表":
+        headers = [...csvBaseTitle, ...courseFeedbackTitle];
+        data = courseFeedbackPrintList.length
+          ? [...courseFeedbackPrintList]
+          : [...courseFeedbackList];
+        break;
+      case "系統滿意度調查表":
+        headers = [...csvBaseTitle, ...systemFeedbackTitle];
+        data = systemFeedbackPrintList.length
+          ? [...systemFeedbackPrintList]
+          : [...systemFeedbackList];
+        break;
+    }
+
+    const worksheetData = [headers, ...data.map(Object.values)];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // 將工作簿導出為 Excel 文件
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "data.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   async function handleOpen() {
     if (selectedList == "服務成果表" && selectionModel.length == 1) {
       console.log("0", selectionModel[0]);
@@ -607,7 +735,8 @@ export default function BasicTable() {
         <button
           className="text-4xl font-bold border-[2px] border-gray-800 bg-white rounded p-2"
           onClick={() => {
-            downloadCSV();
+            // downloadCSV();
+            downloadExcel();
           }}
         >
           下載紀錄

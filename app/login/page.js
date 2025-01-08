@@ -169,7 +169,6 @@ function Login() {
       >
         下一步
       </button>
-      cd ..
     </>
   );
 }

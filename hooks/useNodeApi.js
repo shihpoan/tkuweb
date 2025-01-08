@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const nodeServerPath = "http://localhost:8000";
-const nodeServerPath = "https://tku.node.zhshihpoan.com";
+const nodeServerPath = "http://localhost:8000";
+// const nodeServerPath = "https://tku.node.zhshihpoan.com";
 
 // apis
 async function useNodeGetApi(apiPath, apiObj) {
@@ -42,11 +42,22 @@ async function useNodeDeleteApi(apiPath, apiObj) {
   });
 }
 
-module.exports = {
+// 匯出所有函數（命名導出）
+export {
   useNodeGetApi,
+  useNodeGetImageApi,
   useNodePostApi,
   useNodePostImageApi,
   useNodePatchApi,
   useNodeDeleteApi,
-  useNodeGetImageApi,
 };
+
+// 如果需要預設導出，可以改成這樣：
+// export default {
+//   useNodeGetApi,
+//   useNodeGetImageApi,
+//   useNodePostApi,
+//   useNodePostImageApi,
+//   useNodePatchApi,
+//   useNodeDeleteApi,
+// };

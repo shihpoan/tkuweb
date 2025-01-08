@@ -6,7 +6,7 @@ import { getCookie } from "cookies-next";
 
 import { useNodePostApi } from "@/hooks/useNodeApi.js";
 
-function page() {
+function Page() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -200,4 +200,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

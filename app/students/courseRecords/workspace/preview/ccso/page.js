@@ -28,7 +28,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function page() {
+function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const _id = searchParams.get("id");
@@ -266,4 +266,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
