@@ -496,38 +496,154 @@ export default function BasicTable() {
 
     let data = [];
     let headers = [];
+    let excelRows = [];
     switch (selectedList) {
       case "服務成果表":
         headers = [...csvBaseTitle, ...ccsoTitle];
         data = ccsoPrintList.length ? [...ccsoPrintList] : [...ccsoList];
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.river_id,
+            item.date,
+            item.teacher_id,
+            item.execution_results,
+            item.picDesc,
+            item.picsUrl.length,
+            item.studentInsights,
+          ]),
+        ];
         break;
       case "反思討論紀錄表":
         headers = [...csvBaseTitle, ...rrTitle];
         data = rrPrintList.length ? [...rrPrintList] : [...rrList];
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.river_id,
+            item.date,
+            item.host,
+            item.recorder,
+            item.participants,
+            item.discussionTopicAndContent,
+          ]),
+        ];
         break;
       case "服務日誌":
         headers = [...csvBaseTitle, ...slTitle];
         data = slPrintList.length ? [...slPrintList] : [...slList];
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.river_id,
+            item.date,
+            item.service_hours,
+            item.service_number,
+            item.service_org,
+            item.dataPresentationMethod,
+            item.serviceContentAndLearningPoints,
+            item.serviceReflection,
+            item.moodJournal,
+          ]),
+        ];
         break;
       case "學習歷程反思單":
         headers = [...csvBaseTitle, ...cslrTitle];
         data = cslrPrintList.length ? [...cslrPrintList] : [...cslrList];
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.river_id,
+            item.date,
+            item.academicYear,
+            item.semester,
+            item.q1,
+            item.q2,
+            item.q3,
+            item.q4,
+            item.q5,
+            item.q6,
+          ]),
+        ];
         break;
       case "課程滿意度調查表":
         headers = [...csvBaseTitle, ...courseFeedbackTitle];
         data = courseFeedbackPrintList.length
           ? [...courseFeedbackPrintList]
           : [...courseFeedbackList];
+
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.place,
+            item.date,
+            item.gender,
+            item.religion,
+            item.experience,
+            item.place,
+            item.score[0],
+            item.score[1],
+            item.score[2],
+            item.score[3],
+            item.score[4],
+            item.score[5],
+            item.score[6],
+            item.score[7],
+            item.score[8],
+            item.score[9],
+            item.score[10],
+            item.score[11],
+            item.score[12],
+            item.score[13],
+            item.score[14],
+            item.score[15],
+            item.score[16],
+            item.score[17],
+            item.score[18],
+            item.score[19],
+            item.score[20],
+            item.score[21],
+            item.score[22],
+            item.score[23],
+            item.score[24],
+            item.totalScore,
+          ]),
+        ];
         break;
       case "系統滿意度調查表":
         headers = [...csvBaseTitle, ...systemFeedbackTitle];
         data = systemFeedbackPrintList.length
           ? [...systemFeedbackPrintList]
           : [...systemFeedbackList];
+        excelRows = [
+          ...data.map((item) => [
+            item.student_id,
+            item.student_name,
+            item.class,
+            item.place,
+            item.date,
+            item.score[0],
+            item.score[1],
+            item.score[2],
+            item.score[3],
+            item.score[4],
+            item.totalScore,
+          ]),
+        ];
         break;
     }
 
-    const worksheetData = [headers, ...data.map(Object.values)];
+    const worksheetData = [headers, ...excelRows];
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
@@ -543,7 +659,7 @@ export default function BasicTable() {
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "data.xlsx";
+    link.download = `${selectedList}.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
