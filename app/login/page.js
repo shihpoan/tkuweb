@@ -112,7 +112,6 @@ function Login() {
       <div id="title" className="flex flex-col justify-center items-center">
         <h1 className="text-[2rem] font-bold">河川生態保育學習</h1>
       </div>
-
       <div
         id="btnArea"
         className="relative flex flex-col w-[20rem] h-[25rem] text-gray-500 bg-white mt-[2rem] rounded px-4 py-20 gap-4"
@@ -170,6 +169,7 @@ function Login() {
       >
         下一步
       </button>
+      cd ..
     </>
   );
 }
